@@ -1,5 +1,6 @@
 ﻿using FON.Olga.StudentManagement.Brokers;
 using FON.Olga.StudentManagement.Entities;
+using Olga.Framework.Entities;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -34,60 +35,133 @@ namespace FON.Olga.StudentManagement
             bool end = false;
             while (!end)
             {
-                Console.WriteLine("Press:\n 1 - insert\n 2 - delte\n 3 - update\n 4 - get all\n 5 - exit\n");
+                Console.WriteLine("Press:\n 1 - insert\n 2 - delete\n 3 - update\n 4 - get all\n 5 - exit\n");
                 int n = Convert.ToInt32(Console.ReadLine());
 
                 switch (n)
                 {
                     case 1:
-                        Student student1 = Data();
-                        Student student2 = Data();
-
-                        OracleConnection connection = GetConnection();
-                        OracleTransaction transaction = null;
-
-                        try
                         {
-                            connection.Open();
-                            transaction = connection.BeginTransaction();
+                            Student student1 = Data();
+                            Student student2 = Data();
 
-                            broker.Insert(student1, connection, transaction);
-                            broker.Update(student2, connection, transaction);
+                            OracleConnection connection = GetConnection();
+                            OracleTransaction transaction = null;
 
-                            transaction.Commit();
+                            try
+                            {
+                                connection.Open();
+                                transaction = connection.BeginTransaction();
+
+                                broker.Insert(student1, connection, transaction);
+                                broker.Insert(student2, connection, transaction);
+
+                                transaction.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction?.Rollback();
+                                Console.WriteLine(ex.Message);
+                            }
+                            finally
+                            {
+                                connection?.Close();
+                            }
+                            break;
                         }
-                        catch (Exception ex)
+                    case 2:
                         {
-                            transaction?.Rollback();
-                            Console.WriteLine(ex.Message);
+                            OracleConnection connection1 = GetConnection();
+                            OracleTransaction transaction1 = null;
+
+                            try
+                            {
+                                Console.WriteLine("Inesrt ID: ");
+                                long id = Convert.ToInt64(Console.ReadLine());
+
+                                connection1.Open();
+                                transaction1 = connection1.BeginTransaction();
+
+                                broker.Delete(id, connection1, transaction1);
+
+                                transaction1.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction1?.Rollback();
+                                Console.WriteLine(ex.Message);
+                            }
+                            finally
+                            {
+                                connection1?.Close();
+                            }
+                            break;
                         }
-                        finally
+                    case 3:
                         {
-                            connection?.Close();
+                            OracleConnection connection3 = GetConnection();
+                            OracleTransaction transaction3 = null;
+
+                            try
+                            {
+                                Console.WriteLine("Inesrt id:");
+                                long sID = Convert.ToInt64(Console.ReadLine());
+                                Entity e = UpdateData(sID);
+
+                                connection3.Open();
+                                transaction3 = connection3.BeginTransaction();
+
+                                broker.Update(e, connection3, transaction3);
+
+                                transaction3.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction3?.Rollback();
+                                Console.WriteLine(ex.Message);
+                            }
+                            finally
+                            {
+                                connection3?.Close();
+                            }
+                            break;
                         }
+                    case 4:
+                        {
+                            OracleConnection connection4 = GetConnection();
+                            OracleTransaction transaction4 = null;
+
+                            try
+                            {
+                                connection4.Open();
+                                transaction4 = connection4.BeginTransaction();
+
+                                List<Entity> students = broker.GetAll(connection4, transaction4);
+                                foreach (Entity entity in students)
+                                {
+                                    Console.WriteLine(entity);
+                                }
+                                transaction4.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                //if (transaction4 != null)
+                                //{
+                                //    transaction4.Rollback();
+                                //}
+
+                                transaction4?.Rollback();
+                                Console.WriteLine(ex.Message);
+                            }
+                            finally
+                            {
+                                connection4?.Close();
+                            }
+                            break;
+                        }
+                    case 5:
+                        end = true;
                         break;
-                    //case 2:
-                    //    Console.WriteLine("Inesrt ID: ");
-                    //    long id = Convert.ToInt64(Console.ReadLine());
-                    //    broker.Delete(id, connection);
-                    //    break;
-                    //case 3:
-                    //    Console.WriteLine("Inesrt id:");
-                    //    long sID = Convert.ToInt64(Console.ReadLine());
-                    //    Entity e = UpdateData(sID);
-
-                    //    broker.Update(e, connection);
-                    //    break;
-                    //case 4:
-                    //    List<Entity> students = broker.GetAll(connection);
-                    //    foreach (Entity entity in students)
-                    //    {
-                    //        Console.WriteLine(entity);
-                    //    }
-                    //    break;
-                    //case 5:
-                    //    end = true;
-                    //    break;
                     default:
                         break;
                 }

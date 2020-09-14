@@ -11,6 +11,6 @@ namespace Olga.Framework.Brokers
         void Insert(Entity entity, DbConnection connection, DbTransaction transaction);
         void Update(Entity entity, DbConnection connection, DbTransaction transaction);
         void Delete(long id, DbConnection connection, DbTransaction transaction);
-        List<Entity> GetAll(DbConnection connection);
+        List<Entity> GetAll(DbConnection connection, DbTransaction transaction);
     }
 }
