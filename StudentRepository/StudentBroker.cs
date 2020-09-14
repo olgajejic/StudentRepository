@@ -13,7 +13,7 @@ namespace StudentRepository
         Entity Get(long id, DbConnection connection);
         void Insert(Entity entity, DbConnection connection);
         void Update(Entity entity, DbConnection connection);
-        void Delete(Entity entity, DbConnection connection);
+        void Delete(long id, DbConnection connection);
         List<Entity> GetAll(DbConnection connection);
     }
 
@@ -34,7 +34,7 @@ namespace StudentRepository
 
             if (reader.Read())
                 result = new Student((long)reader["ID"], (string)reader["NAME"], (string)reader["SURNAME"]);
-
+      
             return result;
         }
 
@@ -64,12 +64,11 @@ namespace StudentRepository
             command.ExecuteNonQuery();
         }
 
-        public void Delete(Entity entity, DbConnection connection)
+        public void Delete(long id, DbConnection connection)
         {
-
             OracleCommand command = (connection as OracleConnection).CreateCommand();
             string sql = "delete students where id = :id";
-            command.Parameters.Add("@id", entity.ID);
+            command.Parameters.Add("@id",id);
        
             command.CommandText = sql;
             command.ExecuteNonQuery();
