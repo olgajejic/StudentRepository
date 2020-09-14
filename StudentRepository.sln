@@ -3,7 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentRepository", "StudentRepository\StudentRepository.csproj", "{AF46D80C-868A-4A44-97AD-1F44E47CEC4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentRepository", "StudentRepository\StudentRepository.csproj", "{AF46D80C-868A-4A44-97AD-1F44E47CEC4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olga.Framework.Brokers", "Olga.Framework.Brokers\Olga.Framework.Brokers.csproj", "{9EDDBD71-964E-4E05-9515-477B4C54AC7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olga.Framework.Entities", "Olga.Framework.Entities\Olga.Framework.Entities.csproj", "{C9935506-3FF8-44AB-A073-F2B4C78BC0B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FON.Olga.StudentManagement.Brokers", "FON.Olga.StudentManagement.Brokers\FON.Olga.StudentManagement.Brokers.csproj", "{DCE462DF-C8F5-4407-9D6C-12E909E53DE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FON.Olga.StudentManagement.Entities", "FON.Olga.StudentManagement.Entities\FON.Olga.StudentManagement.Entities.csproj", "{8170AE44-662B-41E5-B0C9-DDB7C02996C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{51D2A748-6F57-4B83-9DC5-25C59AE2C5A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FON.Olga.StudentManagement", "FON.Olga.StudentManagement\FON.Olga.StudentManagement.csproj", "{22600CA0-3BF6-498F-9FD3-586CB7A8BD4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +27,33 @@ Global
 		{AF46D80C-868A-4A44-97AD-1F44E47CEC4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF46D80C-868A-4A44-97AD-1F44E47CEC4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF46D80C-868A-4A44-97AD-1F44E47CEC4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EDDBD71-964E-4E05-9515-477B4C54AC7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EDDBD71-964E-4E05-9515-477B4C54AC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EDDBD71-964E-4E05-9515-477B4C54AC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EDDBD71-964E-4E05-9515-477B4C54AC7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9935506-3FF8-44AB-A073-F2B4C78BC0B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9935506-3FF8-44AB-A073-F2B4C78BC0B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9935506-3FF8-44AB-A073-F2B4C78BC0B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9935506-3FF8-44AB-A073-F2B4C78BC0B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCE462DF-C8F5-4407-9D6C-12E909E53DE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCE462DF-C8F5-4407-9D6C-12E909E53DE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCE462DF-C8F5-4407-9D6C-12E909E53DE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCE462DF-C8F5-4407-9D6C-12E909E53DE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8170AE44-662B-41E5-B0C9-DDB7C02996C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8170AE44-662B-41E5-B0C9-DDB7C02996C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8170AE44-662B-41E5-B0C9-DDB7C02996C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8170AE44-662B-41E5-B0C9-DDB7C02996C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22600CA0-3BF6-498F-9FD3-586CB7A8BD4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22600CA0-3BF6-498F-9FD3-586CB7A8BD4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22600CA0-3BF6-498F-9FD3-586CB7A8BD4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22600CA0-3BF6-498F-9FD3-586CB7A8BD4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9EDDBD71-964E-4E05-9515-477B4C54AC7E} = {51D2A748-6F57-4B83-9DC5-25C59AE2C5A5}
+		{C9935506-3FF8-44AB-A073-F2B4C78BC0B0} = {51D2A748-6F57-4B83-9DC5-25C59AE2C5A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51B94B1B-8628-4D76-A1FD-FE99AAE15CAA}

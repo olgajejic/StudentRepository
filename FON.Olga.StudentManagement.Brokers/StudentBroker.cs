@@ -1,23 +1,14 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using FON.Olga.StudentManagement.Entities;
+using Olga.Framework.Brokers;
+using Olga.Framework.Entities;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
-using System.Text;
 
-namespace StudentRepository
+namespace FON.Olga.StudentManagement.Brokers
 {
-    public interface EntityBroker
-    {
-        Entity Get(long id, DbConnection connection);
-        void Insert(Entity entity, DbConnection connection);
-        void Update(Entity entity, DbConnection connection);
-        void Delete(long id, DbConnection connection);
-        List<Entity> GetAll(DbConnection connection);
-    }
-
-    public class StudentBroker : EntityBroker
+    public class StudentBroker : IEntityBroker
     {
         public StudentBroker()
         {
@@ -34,28 +25,30 @@ namespace StudentRepository
 
             if (reader.Read())
                 result = new Student((long)reader["ID"], (string)reader["NAME"], (string)reader["SURNAME"]);
-      
+
             return result;
         }
 
-        public void Insert(Entity entity, DbConnection connection)
+        public void Insert(Entity entity, DbConnection connection, DbTransaction transaction)
         {
             Student s = entity as Student;
             OracleCommand command = (connection as OracleConnection).CreateCommand();
+            command.Transaction = transaction as OracleTransaction;
+
             string sql = "insert into students values(:id, :name, :surname)";
             command.Parameters.Add("@id", s.ID);
             command.Parameters.Add("@name", s.Name);
             command.Parameters.Add("@surname", s.Surname);
             command.CommandText = sql;
             command.ExecuteNonQuery();
-
         }
 
-        public void Update(Entity entity, DbConnection connection)
+        public void Update(Entity entity, DbConnection connection, DbTransaction transaction)
         {
             Student sForUpdate = entity as Student;
 
             OracleCommand command = new OracleCommand("update students set name = :name, surname = :surname where id = :id", connection as OracleConnection);
+            command.Transaction = transaction as OracleTransaction;
 
             command.Parameters.Add("@name", sForUpdate.Name);
             command.Parameters.Add("@surname", sForUpdate.Surname);
@@ -64,12 +57,14 @@ namespace StudentRepository
             command.ExecuteNonQuery();
         }
 
-        public void Delete(long id, DbConnection connection)
+        public void Delete(long id, DbConnection connection, DbTransaction transaction)
         {
             OracleCommand command = (connection as OracleConnection).CreateCommand();
+            command.Transaction = transaction as OracleTransaction;
+
             string sql = "delete students where id = :id";
-            command.Parameters.Add("@id",id);
-       
+            command.Parameters.Add("@id", id);
+
             command.CommandText = sql;
             command.ExecuteNonQuery();
         }
@@ -87,41 +82,11 @@ namespace StudentRepository
                 string name = (string)reader["NAME"];
                 string surname = (string)reader["SURNAME"];
 
-                Student s = new Student(id, name, surname);
-                Debug.WriteLine("bla bla");
+                Student s = new Student(id, name, surname);                
                 result.Add(s);
             }
 
             return result;
-        }
-    }
-
-    public class BrokerManager
-    {
-        public void Insert(Entity entity)
-        {
-            DbConnection connection = null;
-            // open connection
-            //begin transaction
-
-            var broker = CreateEntityBroker(entity);
-
-            broker.Insert(entity, connection);
-
-            //commit transation
-            //close connection
-        }
-
-        private EntityBroker CreateEntityBroker(Entity entity)
-        {
-            var entityType = entity.GetType();
-
-            switch (entityType.Name)
-            {
-                case "Student": return new StudentBroker();
-                default:
-                    throw new Exception("Unsuported entity ...");
-            }
         }
     }
 }
