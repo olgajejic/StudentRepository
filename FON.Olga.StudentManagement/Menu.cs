@@ -18,9 +18,9 @@ namespace FON.Olga.StudentManagement
         public void Start()
         {
             BrokerManager brokerManager = new BrokerManager();
-            List<Student> listForInsert = new List<Student>();
-            List<Student> listForUpdate = new List<Student>();
-            List<Student> listForDelete = new List<Student>();
+            List<Entity> listForInsert = new List<Entity>();
+            List<Entity> listForUpdate = new List<Entity>();
+            List<Entity> listForDelete = new List<Entity>();
             bool end = false;
             while (!end)
             {
