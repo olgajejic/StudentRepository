@@ -16,6 +16,7 @@ namespace FON.Olga.StudentManagement.Entities
             this.Surname = Surname;
         }
 
+        
         public string Name { get; set; }
         public string Surname { get; set; }
 

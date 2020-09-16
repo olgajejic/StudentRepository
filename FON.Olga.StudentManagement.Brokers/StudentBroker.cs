@@ -32,8 +32,7 @@ namespace FON.Olga.StudentManagement.Brokers
 
         public void Insert(Entity entity, DbConnection connection, DbTransaction transaction)
         {
-            Student s = null;
-
+            var s = entity as Student;
             OracleCommand command = (connection as OracleConnection).CreateCommand();
             command.Transaction = transaction as OracleTransaction;
 

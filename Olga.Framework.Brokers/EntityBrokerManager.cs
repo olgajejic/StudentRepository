@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Olga.Framework.Brokers
 {
-    public abstract class EntityBrokerManager : IEntityBrokerManager
+    public abstract class EntityBrokerManager : IEntityBrokerManager 
     {
         public abstract Entity Get(long id, Type entityType);
         public abstract List<Entity> GetAll(Type entityType);
