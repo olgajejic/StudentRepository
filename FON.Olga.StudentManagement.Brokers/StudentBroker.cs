@@ -70,7 +70,7 @@ namespace FON.Olga.StudentManagement.Brokers
             command.ExecuteNonQuery();
         }
 
-        public List<Entity> GetAll(DbConnection connection, DbTransaction transaction)
+        public List<Entity> GetAll(DbConnection connection)
         {
             var result = new List<Entity>();
 
