@@ -35,7 +35,7 @@ namespace FON.Olga.StudentManagement
             bool end = false;
             while (!end)
             {
-                Console.WriteLine("Press:\n 1 - insert\n 2 - delete\n 3 - update\n 4 - get all\n 5 - exit\n");
+                Console.WriteLine("Press:\n 1 - insert\n 2 - delete\n 3 - update\n 4 - get all\n 5 - get\n 6 - exit\n");
                 int n = Convert.ToInt32(Console.ReadLine());
 
                 switch (n)
@@ -128,20 +128,17 @@ namespace FON.Olga.StudentManagement
                         }
                     case 4:
                         {
-                            OracleConnection connection4 = GetConnection();
-                            OracleTransaction transaction4 = null;
+                            OracleConnection connection4 = GetConnection();                            
 
                             try
                             {
-                                connection4.Open();
-                                transaction4 = connection4.BeginTransaction();
+                                connection4.Open();                                
 
-                                List<Entity> students = broker.GetAll(connection4, transaction4);
+                                List<Entity> students = broker.GetAll(connection4);
                                 foreach (Entity entity in students)
                                 {
                                     Console.WriteLine(entity);
-                                }
-                                transaction4.Commit();
+                                }                                
                             }
                             catch (Exception ex)
                             {
@@ -149,8 +146,7 @@ namespace FON.Olga.StudentManagement
                                 //{
                                 //    transaction4.Rollback();
                                 //}
-
-                                transaction4?.Rollback();
+                                
                                 Console.WriteLine(ex.Message);
                             }
                             finally
@@ -160,6 +156,21 @@ namespace FON.Olga.StudentManagement
                             break;
                         }
                     case 5:
+                        BrokerManager brokerManager = new BrokerManager();
+
+                        try
+                        {
+                            var student = brokerManager.Get(1000, typeof(Student)) as Student;                            
+
+                            Console.WriteLine(student);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            Console.ReadLine();
+                        }
+                        break;
+                    case 6:
                         end = true;
                         break;
                     default:
