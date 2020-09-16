@@ -30,18 +30,25 @@ namespace FON.Olga.StudentManagement.Brokers
             return result;
         }
 
-        public void Insert(Entity entity, DbConnection connection, DbTransaction transaction)
+        public void Insert(DbConnection connection, DbTransaction transaction, params Entity[] entities)
         {
-            Student s = entity as Student;
-            OracleCommand command = (connection as OracleConnection).CreateCommand();
-            command.Transaction = transaction as OracleTransaction;
+            Student s = null;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                s = entities[i] as Student;
 
-            string sql = "insert into students values(:id, :name, :surname)";
-            command.Parameters.Add("@id", s.ID);
-            command.Parameters.Add("@name", s.Name);
-            command.Parameters.Add("@surname", s.Surname);
-            command.CommandText = sql;
-            command.ExecuteNonQuery();
+                OracleCommand command = (connection as OracleConnection).CreateCommand();
+                command.Transaction = transaction as OracleTransaction;
+
+                string sql = "insert into students values(:id, :name, :surname)";
+                command.Parameters.Add("@id", s.ID);
+                command.Parameters.Add("@name", s.Name);
+                command.Parameters.Add("@surname", s.Surname);
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+            }
+            
+           
         }
 
         public void Update(Entity entity, DbConnection connection, DbTransaction transaction)
@@ -75,7 +82,6 @@ namespace FON.Olga.StudentManagement.Brokers
             var result = new List<Entity>();
 
             OracleCommand cmd = new OracleCommand("SELECT * FROM STUDENTS", connection as OracleConnection);
-            cmd.Transaction = transaction as OracleTransaction;
             OracleDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
@@ -90,5 +96,7 @@ namespace FON.Olga.StudentManagement.Brokers
 
             return result;
         }
+
+     
     }
 }

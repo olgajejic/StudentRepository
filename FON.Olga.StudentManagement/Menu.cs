@@ -30,7 +30,7 @@ namespace FON.Olga.StudentManagement
 
         public void Start()
         {
-            StudentBroker broker = new StudentBroker();
+            BrokerManager brokerManager = new BrokerManager();
 
             bool end = false;
             while (!end)
@@ -44,63 +44,37 @@ namespace FON.Olga.StudentManagement
                         {
                             Student student1 = Data();
                             Student student2 = Data();
-
-                            OracleConnection connection = GetConnection();
-                            OracleTransaction transaction = null;
-
                             try
                             {
-                                connection.Open();
-                                transaction = connection.BeginTransaction();
-
-                                broker.Insert(student1, connection, transaction);
-                                broker.Insert(student2, connection, transaction);
-
-                                transaction.Commit();
+                                brokerManager.Save();
+                                brokerManager.Insert(typeof(Student), student1, student2);
+                                //brokerManager.Insert(student2, connection, transaction);
                             }
                             catch (Exception ex)
                             {
-                                transaction?.Rollback();
                                 Console.WriteLine(ex.Message);
-                            }
-                            finally
-                            {
-                                connection?.Close();
                             }
                             break;
                         }
                     case 2:
                         {
-                            OracleConnection connection1 = GetConnection();
-                            OracleTransaction transaction1 = null;
 
                             try
                             {
                                 Console.WriteLine("Inesrt ID: ");
                                 long id = Convert.ToInt64(Console.ReadLine());
 
-                                connection1.Open();
-                                transaction1 = connection1.BeginTransaction();
+                                brokerManager.Delete(id, typeof(Student));
 
-                                broker.Delete(id, connection1, transaction1);
-
-                                transaction1.Commit();
                             }
                             catch (Exception ex)
                             {
-                                transaction1?.Rollback();
                                 Console.WriteLine(ex.Message);
-                            }
-                            finally
-                            {
-                                connection1?.Close();
                             }
                             break;
                         }
                     case 3:
                         {
-                            OracleConnection connection3 = GetConnection();
-                            OracleTransaction transaction3 = null;
 
                             try
                             {
@@ -108,66 +82,48 @@ namespace FON.Olga.StudentManagement
                                 long sID = Convert.ToInt64(Console.ReadLine());
                                 Entity e = UpdateData(sID);
 
-                                connection3.Open();
-                                transaction3 = connection3.BeginTransaction();
+                                brokerManager.Update(e, typeof(Student));
 
-                                broker.Update(e, connection3, transaction3);
-
-                                transaction3.Commit();
                             }
                             catch (Exception ex)
                             {
-                                transaction3?.Rollback();
                                 Console.WriteLine(ex.Message);
-                            }
-                            finally
-                            {
-                                connection3?.Close();
                             }
                             break;
                         }
                     case 4:
                         {
-                            OracleConnection connection4 = GetConnection();                            
 
                             try
                             {
-                                connection4.Open();                                
-
-                                List<Entity> students = broker.GetAll(connection4);
+                                List<Entity> students = brokerManager.GetAll(typeof(Student));
                                 foreach (Entity entity in students)
                                 {
                                     Console.WriteLine(entity);
-                                }                                
+                                }
                             }
                             catch (Exception ex)
                             {
-                                //if (transaction4 != null)
-                                //{
-                                //    transaction4.Rollback();
-                                //}
-                                
+
+
                                 Console.WriteLine(ex.Message);
                             }
-                            finally
-                            {
-                                connection4?.Close();
-                            }
+
                             break;
                         }
                     case 5:
-                        BrokerManager brokerManager = new BrokerManager();
+
+                        Console.WriteLine("Insert students's IDL ");
+                        long studentsID = Convert.ToInt64(Console.ReadLine());
 
                         try
                         {
-                            var student = brokerManager.Get(1000, typeof(Student)) as Student;                            
-
+                            var student = brokerManager.Get(studentsID, typeof(Student)) as Student;
                             Console.WriteLine(student);
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine(ex.Message);
-                            Console.ReadLine();
                         }
                         break;
                     case 6:
