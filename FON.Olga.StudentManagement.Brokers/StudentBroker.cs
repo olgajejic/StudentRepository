@@ -5,6 +5,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Transactions;
 
 namespace FON.Olga.StudentManagement.Brokers
 {
@@ -74,6 +75,7 @@ namespace FON.Olga.StudentManagement.Brokers
             var result = new List<Entity>();
 
             OracleCommand cmd = new OracleCommand("SELECT * FROM STUDENTS", connection as OracleConnection);
+            cmd.Transaction = transaction as OracleTransaction;
             OracleDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
@@ -82,7 +84,7 @@ namespace FON.Olga.StudentManagement.Brokers
                 string name = (string)reader["NAME"];
                 string surname = (string)reader["SURNAME"];
 
-                Student s = new Student(id, name, surname);                
+                Student s = new Student(id, name, surname);
                 result.Add(s);
             }
 
