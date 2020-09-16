@@ -3,6 +3,8 @@ using Olga.Framework.Entities;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace FON.Olga.StudentManagement.Brokers
 {
     public class BrokerManager : EntityBrokerManager
@@ -24,61 +26,6 @@ namespace FON.Olga.StudentManagement.Brokers
             finally
             {
                 connection?.Close();
-            }
-        }
-
-        public override void Insert(Type entityType, params Entity[] entities)
-        {
-            OracleConnection connection = GetConnection();
-            OracleTransaction transaction = null;
-            try
-            {
-                connection.Open();
-                transaction = connection.BeginTransaction();
-
-                IEntityBroker broker = GetBroker(entityType);
-
-                broker.Insert(connection, transaction, entities);
-
-                transaction.Commit();
-
-            }
-            catch (Exception ex)
-            {
-                transaction?.Rollback();
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                connection?.Close();
-            }
-        }
-
-        public void Save()
-        {
-            
-        }
-
-        private OracleConnection GetConnection()
-        {
-            OracleConnection connection = new OracleConnection();
-
-            OracleConnectionStringBuilder ocsb = new OracleConnectionStringBuilder();
-            ocsb.Password = "olga123";
-            ocsb.UserID = "olga";
-            ocsb.DataSource = "localhost:1521/orcl";
-            connection.ConnectionString = ocsb.ConnectionString;
-
-            return connection;
-        }
-
-        private IEntityBroker GetBroker(Type entityType)
-        {
-            switch (entityType.Name)
-            {
-                case "Student": return new StudentBroker();
-                default:
-                    throw new Exception("No such broker");
             }
         }
 
@@ -107,7 +54,42 @@ namespace FON.Olga.StudentManagement.Brokers
             }
         }
 
-        public override void Delete(long id, Type entityType)
+        public override void Insert(params Entity[] entities)
+        {
+            OracleConnection connection = GetConnection();
+            OracleTransaction transaction = null;
+            try
+            {
+                connection.Open();
+                transaction = connection.BeginTransaction();
+
+                InsertImpl(entities, connection, transaction);
+
+                transaction.Commit();
+
+            }
+            catch (Exception ex)
+            {
+                transaction?.Rollback();
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                connection?.Close();
+            }
+        }
+
+        private void InsertImpl(IEnumerable<Entity> entities, OracleConnection connection, OracleTransaction transaction)
+        {
+            foreach (var entity in entities)
+            {
+                IEntityBroker broker = GetBroker(entity.GetType());
+
+                broker.Insert(entity, connection, transaction);
+            }
+        }
+
+        public override void Delete(params Entity[] entities)
         {
             OracleConnection connection = GetConnection();
             OracleTransaction transaction = null;
@@ -117,9 +99,7 @@ namespace FON.Olga.StudentManagement.Brokers
                 connection.Open();
                 transaction = connection.BeginTransaction();
 
-                IEntityBroker broker = GetBroker(entityType);
-
-                broker.Delete(id, connection, transaction);
+                DeleteImpl(entities, connection, transaction);
 
                 transaction.Commit();
             }
@@ -133,8 +113,17 @@ namespace FON.Olga.StudentManagement.Brokers
                 connection?.Close();
             }
         }
+        private void DeleteImpl(IEnumerable<Entity> entities, OracleConnection connection, OracleTransaction transaction)
+        {
+            foreach (var entity in entities)
+            {
+                IEntityBroker broker = GetBroker(entity.GetType());
 
-        public override void Update(Entity e, Type entityType)
+                broker.Delete(entity, connection, transaction);
+            }
+        }
+
+        public override void Update(params Entity[] entities)
         {
             OracleConnection connection = GetConnection();
             OracleTransaction transaction = null;
@@ -143,10 +132,8 @@ namespace FON.Olga.StudentManagement.Brokers
                 connection.Open();
                 transaction = connection.BeginTransaction();
 
-                IEntityBroker broker = GetBroker(entityType);
-
-                broker.Update(e, connection, transaction);
-
+                UpdateImpl(entities, connection, transaction);
+                
                 transaction.Commit();
             }
             catch (Exception ex)
@@ -155,6 +142,72 @@ namespace FON.Olga.StudentManagement.Brokers
                 Console.WriteLine(ex.Message);
             }
            
+            finally
+            {
+                connection?.Close();
+            }
+        }
+
+        private void UpdateImpl(IEnumerable<Entity> entities, OracleConnection connection, OracleTransaction transaction)
+        {
+            foreach (var entity in entities)
+            {
+                IEntityBroker broker = GetBroker(entity.GetType());
+
+                broker.Update(entity, connection, transaction);
+            }
+        }
+
+        private OracleConnection GetConnection()
+        {
+            OracleConnection connection = new OracleConnection();
+
+            OracleConnectionStringBuilder ocsb = new OracleConnectionStringBuilder();
+            ocsb.Password = "olga123";
+            ocsb.UserID = "olga";
+            ocsb.DataSource = "localhost:1521/orcl";
+            connection.ConnectionString = ocsb.ConnectionString;
+
+            return connection;
+        }
+
+        private IEntityBroker GetBroker(Type entityType)
+        {
+            switch (entityType.Name)
+            {
+                case "Student": return new StudentBroker();
+                default:
+                    throw new Exception("No such broker");
+            }
+        }
+
+        public override void Save(IEnumerable<Entity> entitiesForInsert, IEnumerable<Entity> entitiesForUpdate, IEnumerable<Entity> entitiesForDelete)
+        {
+            OracleConnection connection = GetConnection();
+            OracleTransaction transaction = null;
+
+            try
+            {
+                connection.Open();
+                transaction = connection.BeginTransaction();
+
+                if ((entitiesForInsert != null) && entitiesForInsert.Count() > 0)
+                    InsertImpl(entitiesForInsert, connection, transaction);
+
+                if ((entitiesForUpdate != null) && entitiesForUpdate.Count() > 0)
+                    UpdateImpl(entitiesForUpdate, connection, transaction);
+
+                if ((entitiesForDelete != null) && entitiesForDelete.Count() > 0)
+                    DeleteImpl(entitiesForDelete, connection, transaction);                
+
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction?.Rollback();
+                Console.WriteLine(ex.Message);
+            }
+
             finally
             {
                 connection?.Close();

@@ -45,10 +45,8 @@ namespace FON.Olga.StudentManagement
                             Student student1 = Data();
                             Student student2 = Data();
                             try
-                            {
-                                brokerManager.Save();
-                                brokerManager.Insert(typeof(Student), student1, student2);
-                                //brokerManager.Insert(student2, connection, transaction);
+                            {                                
+                                brokerManager.Insert(student1, student2);                                
                             }
                             catch (Exception ex)
                             {
@@ -64,7 +62,12 @@ namespace FON.Olga.StudentManagement
                                 Console.WriteLine("Inesrt ID: ");
                                 long id = Convert.ToInt64(Console.ReadLine());
 
-                                brokerManager.Delete(id, typeof(Student));
+                                Student student = brokerManager.Get(id, typeof(Student)) as Student;
+
+                                if (student == null)
+                                    Console.WriteLine($"Student sa id: {id} nije u bazi");
+                                else
+                                    brokerManager.Delete(student);
 
                             }
                             catch (Exception ex)
@@ -80,9 +83,11 @@ namespace FON.Olga.StudentManagement
                             {
                                 Console.WriteLine("Inesrt id:");
                                 long sID = Convert.ToInt64(Console.ReadLine());
-                                Entity e = UpdateData(sID);
 
-                                brokerManager.Update(e, typeof(Student));
+                                Student student = brokerManager.Get(sID, typeof(Student)) as Student;
+                                UpdateData(student);
+
+                                brokerManager.Update(student);
 
                             }
                             catch (Exception ex)
@@ -153,19 +158,15 @@ namespace FON.Olga.StudentManagement
             return s;
         }
 
-        private Student UpdateData(long id)
+        private void UpdateData(Student student)
         {
             Console.WriteLine("Inesrt first name:");
             string _name = Console.ReadLine();
             Console.WriteLine("Inesrt last name:");
             string _lastName = Console.ReadLine();
-
-            Student s = new Student();
-            s.ID = id;
-            s.Name = _name;
-            s.Surname = _lastName;
-
-            return s;
+                        
+            student.Name = _name;
+            student.Surname = _lastName;
         }
 
     }

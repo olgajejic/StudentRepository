@@ -30,25 +30,19 @@ namespace FON.Olga.StudentManagement.Brokers
             return result;
         }
 
-        public void Insert(DbConnection connection, DbTransaction transaction, params Entity[] entities)
+        public void Insert(Entity entity, DbConnection connection, DbTransaction transaction)
         {
             Student s = null;
-            for (int i = 0; i < entities.Length; i++)
-            {
-                s = entities[i] as Student;
 
-                OracleCommand command = (connection as OracleConnection).CreateCommand();
-                command.Transaction = transaction as OracleTransaction;
+            OracleCommand command = (connection as OracleConnection).CreateCommand();
+            command.Transaction = transaction as OracleTransaction;
 
-                string sql = "insert into students values(:id, :name, :surname)";
-                command.Parameters.Add("@id", s.ID);
-                command.Parameters.Add("@name", s.Name);
-                command.Parameters.Add("@surname", s.Surname);
-                command.CommandText = sql;
-                command.ExecuteNonQuery();
-            }
-            
-           
+            string sql = "insert into students values(:id, :name, :surname)";
+            command.Parameters.Add("@id", s.ID);
+            command.Parameters.Add("@name", s.Name);
+            command.Parameters.Add("@surname", s.Surname);
+            command.CommandText = sql;
+            command.ExecuteNonQuery();
         }
 
         public void Update(Entity entity, DbConnection connection, DbTransaction transaction)
@@ -65,13 +59,13 @@ namespace FON.Olga.StudentManagement.Brokers
             command.ExecuteNonQuery();
         }
 
-        public void Delete(long id, DbConnection connection, DbTransaction transaction)
+        public void Delete(Entity entity, DbConnection connection, DbTransaction transaction)
         {
             OracleCommand command = (connection as OracleConnection).CreateCommand();
             command.Transaction = transaction as OracleTransaction;
 
             string sql = "delete students where id = :id";
-            command.Parameters.Add("@id", id);
+            command.Parameters.Add("@id", entity.ID);
 
             command.CommandText = sql;
             command.ExecuteNonQuery();
@@ -97,6 +91,6 @@ namespace FON.Olga.StudentManagement.Brokers
             return result;
         }
 
-     
+
     }
 }
