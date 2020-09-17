@@ -12,6 +12,8 @@ namespace Olga.Framework.Brokers
         void Delete(params Entity[] entities);
         void Update(params Entity[] entities);
 
-        void Save(IEnumerable<Entity> entitiesForInsert, IEnumerable<Entity> entitiesForUpdate, IEnumerable<Entity> entitiesForDelete);        
+        void Save(IEnumerable<Entity> entitiesForInsert, IEnumerable<Entity> entitiesForUpdate, IEnumerable<Entity> entitiesForDelete);
+        void SaveAll(IEnumerable<Entity> entities);
+        void Save();
     }
 }

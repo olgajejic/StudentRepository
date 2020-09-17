@@ -18,9 +18,7 @@ namespace FON.Olga.StudentManagement
         public void Start()
         {
             BrokerManager brokerManager = new BrokerManager();
-            List<Entity> listForInsert = new List<Entity>();
-            List<Entity> listForUpdate = new List<Entity>();
-            List<Entity> listForDelete = new List<Entity>();
+
             bool end = false;
             while (!end)
             {
@@ -37,8 +35,10 @@ namespace FON.Olga.StudentManagement
                             {
                                 //rokerManager.Insert(student1, student2);     
                                 // brokerManager.Save(new List<Student>() { student1, student2 }, null, null);
-                                listForInsert.Add(student1);
-                                listForInsert.Add(student2);
+                                //entities.Add(student1);
+                                //entities.Add(student2);
+
+                                brokerManager.Insert(student1, student2);
                             }
                             catch (Exception ex)
                             {
@@ -58,7 +58,7 @@ namespace FON.Olga.StudentManagement
                                     Console.WriteLine("To stop insert 0");
                                     var e = Convert.ToInt32(Console.ReadLine());
 
-                                    if (e.Equals(0)) 
+                                    if (e.Equals(0))
                                         exit = true;
 
                                     Student student = brokerManager.Get(id, typeof(Student)) as Student;
@@ -67,8 +67,9 @@ namespace FON.Olga.StudentManagement
 
                                     else
                                     {
-                                        listForDelete.Add(student);
+                                        //student.EntityState = State.DELETED;
                                         //brokerManager.Save(null, null, entities);
+                                        brokerManager.Delete(student);
                                     }
 
                                 }
@@ -84,14 +85,13 @@ namespace FON.Olga.StudentManagement
                         {
 
                             bool exit = false;
-                            List<Entity> entities = new List<Entity>();
                             while (!exit)
                             {
                                 try
                                 {
                                     Console.WriteLine("Inesrt ID: ");
                                     long id = Convert.ToInt64(Console.ReadLine());
-                                   
+
                                     Student student = brokerManager.Get(id, typeof(Student)) as Student;
                                     UpdateData(student);
                                     Console.WriteLine("To stop insert 0");
@@ -105,7 +105,8 @@ namespace FON.Olga.StudentManagement
 
                                     else
                                     {
-                                        listForUpdate.Add(student);
+                                        brokerManager.Update(student);
+                                        //entities.Add(student);
                                         //brokerManager.Save(null, entities, null);
                                     }
 
@@ -119,7 +120,7 @@ namespace FON.Olga.StudentManagement
                             break;
                         }
                     case 4:
-                        brokerManager.Save(listForInsert, listForUpdate, listForDelete);
+                        brokerManager.Save();
                         break;
                     case 5:
                         {
@@ -134,7 +135,6 @@ namespace FON.Olga.StudentManagement
                             }
                             catch (Exception ex)
                             {
-
 
                                 Console.WriteLine(ex.Message);
                             }
@@ -179,6 +179,7 @@ namespace FON.Olga.StudentManagement
             s.ID = _id;
             s.Name = _name;
             s.Surname = _lastName;
+            //s.EntityState = State.NEW;
 
             return s;
         }
@@ -192,7 +193,9 @@ namespace FON.Olga.StudentManagement
 
             student.Name = _name;
             student.Surname = _lastName;
+            //student.EntityState = State.CHANGED;
         }
+
 
     }
 }
