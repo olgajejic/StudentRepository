@@ -21,5 +21,6 @@ namespace Olga.Framework.Entities
         }
         public Entity Entity { get; set; }
         public State EState { get; set; }
+        
     }
 }

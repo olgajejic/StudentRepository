@@ -33,11 +33,7 @@ namespace FON.Olga.StudentManagement
                             Student student2 = Data();
                             try
                             {
-                                //rokerManager.Insert(student1, student2);     
-                                // brokerManager.Save(new List<Student>() { student1, student2 }, null, null);
-                                //entities.Add(student1);
-                                //entities.Add(student2);
-
+                           
                                 brokerManager.Insert(student1, student2);
                             }
                             catch (Exception ex)
@@ -143,7 +139,7 @@ namespace FON.Olga.StudentManagement
                         }
                     case 6:
 
-                        Console.WriteLine("Insert students's IDL ");
+                        Console.WriteLine("Insert students's ID: ");
                         long studentsID = Convert.ToInt64(Console.ReadLine());
 
                         try

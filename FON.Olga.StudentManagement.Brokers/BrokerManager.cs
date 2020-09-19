@@ -75,31 +75,9 @@ namespace FON.Olga.StudentManagement.Brokers
                     if (entity.ID == e.Entity.ID)
                         throw new Exception("Cannot insert two entities with the same id!");
                 }
-                eStates.Add(new EntityState(entity, State.NEW)); 
+                eStates.Add(new EntityState(entity, State.NEW));
             }
 
-
-            //OracleConnection connection = GetConnection();
-            //OracleTransaction transaction = null;
-            //try
-            //{
-            //    connection.Open();
-            //    transaction = connection.BeginTransaction();
-
-            //    InsertImpl(entities, connection, transaction);
-
-            //    transaction.Commit();
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    transaction?.Rollback();
-            //    Console.WriteLine(ex.Message);
-            //}
-            //finally
-            //{
-            //    connection?.Close();
-            //}
         }
 
         private void InsertImpl(IEnumerable<Entity> entities, OracleConnection connection, OracleTransaction transaction)
@@ -118,8 +96,13 @@ namespace FON.Olga.StudentManagement.Brokers
             {
                 foreach (var e in eStates)
                 {
+
+
                     if (entity.ID == e.Entity.ID)
                     {
+                        if (e.Entity.VersionNumber != entity.VersionNumber)
+                            throw new Exception("You are not working with current version!");
+
                         switch (e.EState)
                         {
                             case State.NEW:
@@ -137,27 +120,6 @@ namespace FON.Olga.StudentManagement.Brokers
                     }
                 }
             }
-            //OracleConnection connection = GetConnection();
-            //OracleTransaction transaction = null;
-
-            //try
-            //{
-            //    connection.Open();
-            //    transaction = connection.BeginTransaction();
-
-            //    DeleteImpl(entities, connection, transaction);
-
-            //    transaction.Commit();
-            //}
-            //catch (Exception ex)
-            //{
-            //    transaction?.Rollback();
-            //    Console.WriteLine(ex.Message);
-            //}
-            //finally
-            //{
-            //    connection?.Close();
-            //}
         }
         private void DeleteImpl(IEnumerable<Entity> entities, OracleConnection connection, OracleTransaction transaction)
         {
@@ -195,27 +157,7 @@ namespace FON.Olga.StudentManagement.Brokers
                     }
                 }
             }
-            //OracleConnection connection = GetConnection();
-            //OracleTransaction transaction = null;
-            //try
-            //{
-            //    connection.Open();
-            //    transaction = connection.BeginTransaction();
 
-            //    UpdateImpl(entities, connection, transaction);
-
-            //    transaction.Commit();
-            //}
-            //catch (Exception ex)
-            //{
-            //    transaction?.Rollback();
-            //    Console.WriteLine(ex.Message);
-            //}
-
-            //finally
-            //{
-            //    connection?.Close();
-            //}
         }
 
         public override void Save()
@@ -277,36 +219,6 @@ namespace FON.Olga.StudentManagement.Brokers
 
         public override void SaveAll(IEnumerable<Entity> entities)
         {
-            //OracleConnection connection = GetConnection();
-            //OracleTransaction transaction = null;
-
-            //try
-            //{
-            //    connection.Open();
-            //    transaction = connection.BeginTransaction();
-
-            //    foreach (var entity in entities)
-            //    {
-            //        if (entity.EntityState.Equals(State.NEW))
-            //            InsertOne(entity, connection, transaction);
-            //        if (entity.EntityState.Equals(State.DELETED))
-            //            DeleteOne(entity, connection, transaction);
-            //        if (entity.EntityState.Equals(State.CHANGED))
-            //            UpdateOne(entity, connection, transaction);
-            //    }
-
-            //    transaction.Commit();
-            //}
-            //catch (Exception ex)
-            //{
-            //    transaction?.Rollback();
-            //    Console.WriteLine(ex.Message);
-            //}
-
-            //finally
-            //{
-            //    connection?.Close();
-            //}
 
         }
 

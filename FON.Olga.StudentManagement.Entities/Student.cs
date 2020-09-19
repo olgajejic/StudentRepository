@@ -9,11 +9,12 @@ namespace FON.Olga.StudentManagement.Entities
         {
 
         }
-        public Student(long ID, string Name, string Surname)
+        public Student(long ID, string Name, string Surname, int versionNumber)
         {
             this.ID = ID;
             this.Name = Name;
             this.Surname = Surname;
+            this.VersionNumber = versionNumber;
         }
 
         
@@ -22,7 +23,7 @@ namespace FON.Olga.StudentManagement.Entities
 
         public override string ToString()
         {
-            return "Student: " + Name + " " + Surname;
+            return "Student: " + Name + " " + Surname + " " + VersionNumber;
         }
     }
 }
