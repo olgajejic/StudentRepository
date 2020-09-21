@@ -41,7 +41,7 @@ namespace FON.Olga.StudentManagement.Brokers
             }
         }
 
-        public override List<Entity> GetAll(Type entityType)
+        public override List<EntityState> GetAll(Type entityType)
         {
             OracleConnection connection = GetConnection();
 
@@ -53,7 +53,12 @@ namespace FON.Olga.StudentManagement.Brokers
 
                 List<Entity> entities = broker.GetAll(connection);
 
-                return entities;
+                foreach (var entity in entities)
+                {
+                    eStates.Add(new EntityState(entity, State.UNCHANGED));
+                }
+
+                return eStates;
             }
             catch (Exception)
             {
@@ -94,15 +99,10 @@ namespace FON.Olga.StudentManagement.Brokers
         {
             foreach (var entity in entities)
             {
-                foreach (var e in eStates)
+                foreach (var e in eStates.ToArray())
                 {
-
-
                     if (entity.ID == e.Entity.ID)
                     {
-                        if (e.Entity.VersionNumber != entity.VersionNumber)
-                            throw new Exception("You are not working with current version!");
-
                         switch (e.EState)
                         {
                             case State.NEW:
@@ -236,8 +236,10 @@ namespace FON.Olga.StudentManagement.Brokers
 
         private void UpdateOne(Entity entity, OracleConnection connection, OracleTransaction transaction)
         {
-            IEntityBroker broker = GetBroker(entity.GetType());
-            broker.Update(entity, connection, transaction);
+
+                IEntityBroker broker = GetBroker(entity.GetType());
+                broker.Update(entity, connection, transaction);
+            
         }
 
         private IEntityBroker GetBroker(Type entityType)

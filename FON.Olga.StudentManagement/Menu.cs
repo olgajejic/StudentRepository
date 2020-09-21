@@ -1,10 +1,14 @@
 ﻿using FON.Olga.StudentManagement.Brokers;
 using FON.Olga.StudentManagement.Entities;
+using MessagePack;
+using MessagePack.Resolvers;
+using Newtonsoft.Json;
 using Olga.Framework.Entities;
-using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
+
+
 
 namespace FON.Olga.StudentManagement
 {
@@ -14,6 +18,77 @@ namespace FON.Olga.StudentManagement
         {
             Start();
         }
+        private dynamic WriteToFile(List<Student> students)
+        {
+            try
+            {
+                byte[] contentsToWriteToFile = MessagePackSerializer.Serialize<List<Student>>(students, ContractlessStandardResolver.Options);
+
+                File.WriteAllBytes(@"C:\Users\snezanaj\source\repos\mp.msgpack", contentsToWriteToFile);
+                return contentsToWriteToFile;
+            }
+            catch (Exception)
+            {
+                throw new Exception();
+            }
+
+        }
+
+        private void ReadFromFile(byte[] x)
+        {
+
+            try
+            {
+                List<Student> students = new List<Student>();
+
+                students = MessagePackSerializer.Deserialize<List<Student>>(File.ReadAllBytes(@"C:\Users\snezanaj\source\repos\mp.msgpack"));
+
+                foreach (var student in students)
+                {
+                    Console.WriteLine(student);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Cannot read from a file");
+            }
+
+        }
+
+        private void WriteToJsonFile(List<Student> students)
+        {
+            string filePath = @"C:\Users\snezanaj\source\repos\mp.json";
+            JsonSerializer jsonSerialize = new JsonSerializer(); //object for json class
+            if (File.Exists(filePath)) File.Delete(filePath);
+
+            StreamWriter sw = new StreamWriter(filePath); //create file
+            JsonWriter jsonWriter = new JsonTextWriter(sw); //write serialized json in file
+
+            jsonSerialize.Serialize(jsonWriter, students);
+            jsonWriter.Close();
+            sw.Close();
+
+
+        }
+
+
+        public void ReadFromJsonFIle()
+        {
+            List<Student> students = new List<Student>();
+            string filePath = @"C:\Users\snezanaj\source\repos\mp.json";
+            if (File.Exists(filePath) == false)
+                throw new Exception($"File doesn't exist on given path: '{filePath}'");
+
+            students = JsonConvert.DeserializeObject<List<Student>>(File.ReadAllText(filePath));
+            foreach (var s in students)
+            {
+                Console.WriteLine(s);
+            }
+        }
+
+
 
         public void Start()
         {
@@ -29,12 +104,25 @@ namespace FON.Olga.StudentManagement
                 {
                     case 1:
                         {
-                            Student student1 = Data();
-                            Student student2 = Data();
+                            //Student student1 = Data();
+                            //Student student2 = Data();
+
+                            byte[] x = Array.Empty<byte>();
+                            List<Student> students = new List<Student>();
+                            for (int i = 1; i <= 10000; i++)
+                            {
+                                Student student = new Student(i, "a", "a", 0);
+                                students.Add(student);
+
+                            }
+                            //x = WriteToFile(students);
+                            WriteToJsonFile(students);
+                            ReadFromJsonFIle();
+                            // ReadFromFile(x);
                             try
                             {
-                           
-                                brokerManager.Insert(student1, student2);
+
+                                // brokerManager.Insert(student1);
                             }
                             catch (Exception ex)
                             {
@@ -123,10 +211,10 @@ namespace FON.Olga.StudentManagement
 
                             try
                             {
-                                List<Entity> students = brokerManager.GetAll(typeof(Student));
-                                foreach (Entity entity in students)
+                                List<EntityState> students = brokerManager.GetAll(typeof(Student));
+                                foreach (EntityState entity in students)
                                 {
-                                    Console.WriteLine(entity);
+                                    Console.WriteLine(entity.Entity);
                                 }
                             }
                             catch (Exception ex)
@@ -175,7 +263,6 @@ namespace FON.Olga.StudentManagement
             s.ID = _id;
             s.Name = _name;
             s.Surname = _lastName;
-            //s.EntityState = State.NEW;
 
             return s;
         }
@@ -191,7 +278,5 @@ namespace FON.Olga.StudentManagement
             student.Surname = _lastName;
             //student.EntityState = State.CHANGED;
         }
-
-
     }
 }

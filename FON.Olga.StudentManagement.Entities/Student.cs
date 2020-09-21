@@ -1,8 +1,10 @@
-﻿using Olga.Framework.Entities;
+﻿using MessagePack;
+using Olga.Framework.Entities;
 using System;
 
 namespace FON.Olga.StudentManagement.Entities
 {
+    //[MessagePackObject(keyAsPropertyName: true)]
     public class Student : Entity
     {
         public Student()
@@ -17,13 +19,12 @@ namespace FON.Olga.StudentManagement.Entities
             this.VersionNumber = versionNumber;
         }
 
-        
         public string Name { get; set; }
         public string Surname { get; set; }
 
         public override string ToString()
         {
-            return "Student: " + Name + " " + Surname + " " + VersionNumber;
+            return "Student: " + ID + " " + Name + " " + Surname + " " + VersionNumber;
         }
     }
 }

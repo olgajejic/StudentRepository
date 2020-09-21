@@ -7,7 +7,7 @@ namespace Olga.Framework.Brokers
     public interface IEntityBrokerManager
     {
         Entity Get(long id, Type entityType);
-        List<Entity> GetAll(Type entityType);
+        List<EntityState> GetAll(Type entityType);
         void Insert(params Entity[] entities);        
         void Delete(params Entity[] entities);
         void Update(params Entity[] entities);
