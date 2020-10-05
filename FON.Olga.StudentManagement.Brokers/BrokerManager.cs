@@ -219,7 +219,8 @@ namespace FON.Olga.StudentManagement.Brokers
 
         public override void SaveAll(IEnumerable<Entity> entities)
         {
-
+         
+            
         }
 
         private void InsertOne(Entity entity, OracleConnection connection, OracleTransaction transaction)

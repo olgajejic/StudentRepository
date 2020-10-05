@@ -2,13 +2,14 @@
 using FON.Olga.StudentManagement.Entities;
 using MessagePack;
 using MessagePack.Resolvers;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using Olga.Framework.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-
-
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FON.Olga.StudentManagement
 {
@@ -17,12 +18,14 @@ namespace FON.Olga.StudentManagement
         public Menu()
         {
             Start();
+
         }
         private dynamic WriteToFile(List<Student> students)
         {
             try
             {
-                byte[] contentsToWriteToFile = MessagePackSerializer.Serialize<List<Student>>(students, ContractlessStandardResolver.Options);
+                var compression = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4Block);
+                byte[] contentsToWriteToFile = MessagePackSerializer.Serialize(students, compression);
 
                 File.WriteAllBytes(@"C:\Users\snezanaj\source\repos\mp.msgpack", contentsToWriteToFile);
                 return contentsToWriteToFile;
@@ -40,13 +43,13 @@ namespace FON.Olga.StudentManagement
             try
             {
                 List<Student> students = new List<Student>();
+                var compression = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4Block);
+                var stu = MessagePackSerializer.Deserialize<List<Student>>(File.ReadAllBytes(@"C:\Users\snezanaj\source\repos\mp.msgpack"), compression);
 
-                students = MessagePackSerializer.Deserialize<List<Student>>(File.ReadAllBytes(@"C:\Users\snezanaj\source\repos\mp.msgpack"));
-
-                foreach (var student in students)
-                {
-                    Console.WriteLine(student);
-                }
+                //foreach (var student in stu)
+                //{
+                //    Console.WriteLine(student);
+                //}
 
             }
             catch (Exception)
@@ -57,7 +60,7 @@ namespace FON.Olga.StudentManagement
 
         }
 
-        private void WriteToJsonFile(List<Student> students)
+        private void WriteToJsonFile(List<Entity> students)
         {
             string filePath = @"C:\Users\snezanaj\source\repos\mp.json";
             JsonSerializer jsonSerialize = new JsonSerializer(); //object for json class
@@ -73,22 +76,69 @@ namespace FON.Olga.StudentManagement
 
         }
 
-
         public void ReadFromJsonFIle()
         {
-            List<Student> students = new List<Student>();
             string filePath = @"C:\Users\snezanaj\source\repos\mp.json";
             if (File.Exists(filePath) == false)
                 throw new Exception($"File doesn't exist on given path: '{filePath}'");
 
-            students = JsonConvert.DeserializeObject<List<Student>>(File.ReadAllText(filePath));
-            foreach (var s in students)
+          var entities = JsonConvert.DeserializeObject<List<Student>>(File.ReadAllText(filePath));
+            foreach (var entity in entities)
             {
-                Console.WriteLine(s);
+                Console.WriteLine(entity);
             }
+
+
+            //JsonSerializer jsonSerializer = new JsonSerializer();
+            //if (File.Exists(filePath))
+            //{
+            //    StreamReader sr = new StreamReader(filePath);
+            //    JsonReader jsonReader = new JsonTextReader(sr);
+
+            //    //  JsonConvert.DeserializeObject<List<Student>>(File.read(filePath));
+            //    var st = jsonSerializer.Deserialize<List<Student>>(jsonReader);
+
+
+            //    foreach (var s in st)
+            //    {
+            //        Console.WriteLine(s);
+            //    }
+
+            //    jsonReader.Close(); //better to use using then closing here
+            //    sr.Close();
+            //    Console.ReadLine();
+            //}
+
+        }
+        private readonly Random _random = new Random();
+
+        // Generates a random number within a range.      
+        public int RandomNumber(int min, int max)
+        {
+            return _random.Next(min, max);
         }
 
+        public string RandomString(int size, bool lowerCase = false)
+        {
+            var builder = new StringBuilder(size);
 
+            // Unicode/ASCII Letters are divided into two blocks
+            // (Letters 65–90 / 97–122):
+            // The first group containing the uppercase letters and
+            // the second group containing the lowercase.  
+
+            // char is a single Unicode character  
+            char offset = lowerCase ? 'a' : 'A';
+            const int lettersOffset = 26; // A...Z or a..z: length=26  
+
+            for (var i = 0; i < size; i++)
+            {
+                var @char = (char)_random.Next(offset, offset + lettersOffset);
+                builder.Append(@char);
+            }
+
+            return lowerCase ? builder.ToString().ToLower() : builder.ToString();
+        }
 
         public void Start()
         {
@@ -108,17 +158,25 @@ namespace FON.Olga.StudentManagement
                             //Student student2 = Data();
 
                             byte[] x = Array.Empty<byte>();
+                            List<Entity> entities = new List<Entity>();
                             List<Student> students = new List<Student>();
-                            for (int i = 1; i <= 10000; i++)
+                            
+                            for (int i = 1; i <= 1000; i++)
                             {
-                                Student student = new Student(i, "a", "a", 0);
+                                Student student = new Student(i, RandomString(RandomNumber(50, 156)), RandomString(RandomNumber(50, 156)), RandomNumber(0,i));
+                               // Professor professor = new Professor(i, RandomString(RandomNumber(50, 156)), RandomString(RandomNumber(50, 156)), RandomNumber(0, i));
                                 students.Add(student);
+                                //entities.Add(professor);
 
                             }
-                            //x = WriteToFile(students);
-                            WriteToJsonFile(students);
-                            ReadFromJsonFIle();
-                            // ReadFromFile(x);
+
+                            var b = DateTime.Now;
+                            x = WriteToFile(students);
+                            //WriteToJsonFile(entities);
+                           // ReadFromJsonFIle();
+                            ReadFromFile(x);
+                            Console.WriteLine(DateTime.Now-b);
+
                             try
                             {
 
